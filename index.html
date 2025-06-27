@@ -63,7 +63,7 @@
                 if(ops[i]["Источник"] !== "OFFICE") continue
                 iSverka += Number(ops[i]["Приход"])
             }
-            sverka.innerText = iSverka.toString().replace(".", ",")
+            sverka.innerText = iSverka.toFixed(2).toString().replace(".", ",")
 
             for (let i = 0; i < cash1111.length; i++) {
                 let td0 = document.createElement("td")
