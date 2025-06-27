@@ -32,6 +32,11 @@
         <tbody id="tableBody">
         </tbody>
     </table>
+    <div style="display: flex">
+        Отнять для получения сверки:
+        <div style="margin-left: 5px; margin-right: 5px" id="sverka"></div>
+        <button id="sverkaCopy">Копировать</button>
+    </div>
     <button id="copyButton">Копировать таблицу</button>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script>
@@ -51,6 +56,14 @@
             const ops = json.filter((item) => item["Платёжная система"] === "OTHER_PAYMENT_SYSTEM")
 
             const qrops = qr.concat(ops)
+
+            // Сверка
+            let iSverka = 0
+            for (let i = 0; i < ops.length; i++) {
+                if(ops[i]["Источник"] !== "OFFICE") continue
+                iSverka += Number(ops[i]["Приход"])
+            }
+            sverka.innerText = iSverka.toString().replace(".", ",")
 
             for (let i = 0; i < cash1111.length; i++) {
                 let td0 = document.createElement("td")
@@ -190,16 +203,38 @@
                     })
                 ]);
 
-                alert('Таблица скопирована! Вставьте в Excel');
+                let oldValue = copyButton.innerText
+                copyButton.innerText = "✔️"
+                setTimeout(() => {
+                    copyButton.innerText = oldValue
+                }, 2000)
             } catch (err) {
                 console.error('Ошибка копирования:', err);
                 alert('Ошибка копирования');
             }
         }
 
+        async function copySverka() {
+            try {
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'text/plain': new Blob([sverka.innerText], { type: 'text/plain' })
+                    })
+                ]);
+                let oldValue = sverkaCopy.innerText
+                sverkaCopy.innerText = "✔️"
+                setTimeout(() => {
+                    sverkaCopy.innerText = oldValue
+                }, 2000)
+            } catch (err) {
+                alert('Ошибка копирования')
+            }
+        }
+
         // attribute id automatically add in window object. window.inputField or just inputField to access dom element
         inputField.addEventListener("change", handleInputChange, false)
         copyButton.addEventListener("click", copyTable, false)
+        sverkaCopy.addEventListener("click", copySverka, false)
     </script>
 </body>
 </html>
