@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Наложка</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            border: 2px solid rgb(140 140 140);
+            font-family: sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <input id="inputField" type="file" accept=".xlsx"/>
+    <br/>
+    <table id="tableResult">
+        <thead>
+            <tr>
+                <th>Услуги</th>
+                <th>Примечание</th>
+                <th>НП</th>
+                <th>Примечание</th>
+                <th>Сумма</th>
+                <th>Примечание</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+    <button id="copyButton">Копировать таблицу</button>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script>
+        async function handleInputChange(e) {
+            const file = e.target.files[0]
+            const data = await file.arrayBuffer()
+            const wb = XLSX.read(data)
+
+            const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+
+            const cash1111 = json.filter((item) => item["Статья ДДС"] === "1.1.1.1 Поступления от оказания услуг клиентам" && item["Тип оплаты"] === "CASH")
+            const cash4111 = json.filter((item) => item["Статья ДДС"] === "4.1.1.1 Поступления наложенных платежей от клиентов" && item["Тип оплаты"] === "CASH")
+            const qr = json.filter((item) => item["Платёжная система"] === "QRCODE")
+            const ops = json.filter((item) => item["Платёжная система"] === "OTHER_PAYMENT_SYSTEM")
+
+            const qrops = qr.concat(ops)
+
+            for (let i = 0; i < cash1111.length; i++) {
+                let td0 = document.createElement("td")
+                td0.innerText = cash1111[i]["Приход"].replace(".", ",")
+                let td1 = document.createElement("td")
+                td1.innerText = cash1111[i]["Номер документа-основания"]
+
+                let tr = tableBody.getElementsByTagName("tr")[i]
+                if (tr === undefined) {
+                    tableBody.appendChild(document.createElement("tr"))
+                }
+
+                td0.style.color = "#0000FF"
+                td0.style.fontWeight = "bold"
+                td0.style.textAlign = "center"
+                td1.style.color = "#0000FF"
+                td1.style.textAlign = "center"
+
+
+                tableBody.getElementsByTagName("tr")[i].appendChild(td0)
+                tableBody.getElementsByTagName("tr")[i].appendChild(td1)
+            }
+
+            {
+                let max = Math.max(cash1111.length, cash4111.length, qrops.length)
+                for (let i = cash1111.length; i < max; i++) {
+                    let tr = tableBody.getElementsByTagName("tr")[i]
+                    if (tr === undefined) {
+                        tableBody.appendChild(document.createElement("tr"))
+                    }
+                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                }
+            }
+
+            for (let i = 0; i < cash4111.length; i++) {
+                let td0 = document.createElement("td")
+                td0.innerText = cash4111[i]["Приход"].replace(".", ",")
+                let td1 = document.createElement("td")
+                td1.innerText = cash4111[i]["Номер документа-основания"]
+
+                let tr = tableBody.getElementsByTagName("tr")[i]
+                if (tr === undefined) {
+                    tableBody.appendChild(document.createElement("tr"))
+                }
+
+                td0.style.color = "#0000FF"
+                td0.style.fontWeight = "bold"
+                td0.style.textAlign = "center"
+                td1.style.color = "#0000FF"
+                td1.style.textAlign = "center"
+
+                tableBody.getElementsByTagName("tr")[i].appendChild(td0)
+                tableBody.getElementsByTagName("tr")[i].appendChild(td1)
+            }
+
+            {
+                let max = Math.max(cash1111.length, cash4111.length, qrops.length)
+                for (let i = cash4111.length; i < max; i++) {
+                    let tr = tableBody.getElementsByTagName("tr")[i]
+                    if (tr === undefined) {
+                        tableBody.appendChild(document.createElement("tr"))
+                    }
+                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                }
+            }
+
+            for (let i = 0; i < qrops.length; i++) {
+                let td0 = document.createElement("td")
+                td0.innerText = qrops[i]["Приход"].replace(".", ",")
+                let td1 = document.createElement("td")
+                td1.innerText = qrops[i]["Номер документа-основания"]
+
+                let tr = tableBody.getElementsByTagName("tr")[i]
+                if (tr === undefined) {
+                    tableBody.appendChild(document.createElement("tr"))
+                }
+
+                td0.style.color = "#0000FF"
+                td0.style.fontWeight = "bold"
+                td0.style.textAlign = "center"
+                td1.style.color = "#0000FF"
+                td1.style.textAlign = "center"
+
+                if (qrops[i]["Платёжная система"] === "QRCODE") {
+                    td0.style.backgroundColor = "#00FF00"
+                    td1.style.backgroundColor = "#00FF00"
+                }
+
+                tableBody.getElementsByTagName("tr")[i].appendChild(td0)
+                tableBody.getElementsByTagName("tr")[i].appendChild(td1)
+            }
+        }
+
+        async function copyTable() {
+            const tableBody = document.getElementById('tableBody');
+
+            const tempTable = document.createElement('table');
+            const tempTbody = document.createElement('tbody');
+
+            for (let row of tableBody.rows) {
+                const newRow = document.createElement('tr');
+                for (let cell of row.cells) {
+                    const newCell = document.createElement('td');
+
+                    newCell.innerHTML = cell.innerHTML;
+                    newCell.style.cssText = cell.style.cssText;
+
+                    newRow.appendChild(newCell);
+                }
+                tempTbody.appendChild(newRow);
+            }
+
+            tempTable.appendChild(tempTbody);
+
+            try {
+                const htmlContent = tempTable.outerHTML;
+                const textContent = Array.from(tempTbody.rows)
+                    .map(row => Array.from(row.cells).map(cell => cell.innerText).join('\t'))
+                    .join('\n');
+
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        'text/html': new Blob([htmlContent], { type: 'text/html' }),
+                        'text/plain': new Blob([textContent], { type: 'text/plain' })
+                    })
+                ]);
+
+                alert('Таблица скопирована! Вставьте в Excel');
+            } catch (err) {
+                console.error('Ошибка копирования:', err);
+                alert('Ошибка копирования');
+            }
+        }
+
+        // attribute id automatically add in window object. window.inputField or just inputField to access dom element
+        inputField.addEventListener("change", handleInputChange, false)
+        copyButton.addEventListener("click", copyTable, false)
+    </script>
+</body>
+</html>
