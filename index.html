@@ -80,8 +80,10 @@
                     if (tr === undefined) {
                         tableBody.appendChild(document.createElement("tr"))
                     }
-                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
-                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                    let td = document.createElement("td")
+                    td.style.border = "1px solid rgb(0 0 0)"
+                    tableBody.getElementsByTagName("tr")[i].appendChild(td)
+                    tableBody.getElementsByTagName("tr")[i].appendChild(td)
                 }
             }
 
@@ -115,8 +117,10 @@
                     if (tr === undefined) {
                         tableBody.appendChild(document.createElement("tr"))
                     }
-                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
-                    tableBody.getElementsByTagName("tr")[i].appendChild(document.createElement("td"))
+                    let td = document.createElement("td")
+                    td.style.border = "1px solid rgb(0 0 0)"
+                    tableBody.getElementsByTagName("tr")[i].appendChild(td)
+                    tableBody.getElementsByTagName("tr")[i].appendChild(td)
                 }
             }
 
