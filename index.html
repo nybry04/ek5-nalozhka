@@ -50,10 +50,12 @@
 
             const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
 
-            const cash1111 = json.filter((item) => item["Статья ДДС"] === "1.1.1.1 Поступления от оказания услуг клиентам" && item["Тип оплаты"] === "CASH")
-            const cash4111 = json.filter((item) => item["Статья ДДС"] === "4.1.1.1 Поступления наложенных платежей от клиентов" && item["Тип оплаты"] === "CASH")
-            const qr = json.filter((item) => item["Платёжная система"] === "QRCODE")
-            const ops = json.filter((item) => item["Платёжная система"] === "OTHER_PAYMENT_SYSTEM")
+            const noPrihodFilter = json.filter((item) => item['Приход'] !== undefined)
+
+            const cash1111 = noPrihodFilter.filter((item) => item["Статья ДДС"] === "1.1.1.1 Поступления от оказания услуг клиентам" && item["Тип оплаты"] === "CASH")
+            const cash4111 = noPrihodFilter.filter((item) => item["Статья ДДС"] === "4.1.1.1 Поступления наложенных платежей от клиентов" && item["Тип оплаты"] === "CASH")
+            const qr = noPrihodFilter.filter((item) => item["Платёжная система"] === "QRCODE")
+            const ops = noPrihodFilter.filter((item) => item["Платёжная система"] === "OTHER_PAYMENT_SYSTEM")
 
             const qrops = qr.concat(ops)
 
