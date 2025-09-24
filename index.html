@@ -53,11 +53,14 @@
             const noPrihodFilter = json.filter((item) => item['Приход'] !== undefined)
 
             const cash1111 = noPrihodFilter.filter((item) => item["Статья ДДС"] === "1.1.1.1 Поступления от оказания услуг клиентам" && item["Тип оплаты"] === "CASH")
+            const packCash = noPrihodFilter.filter((item) => item["Статья ДДС"] === "1.1.4 Поступление от реализации ТМЦ" && item["Тип оплаты"] === "CASH")
             const cash4111 = noPrihodFilter.filter((item) => item["Статья ДДС"] === "4.1.1.1 Поступления наложенных платежей от клиентов" && item["Тип оплаты"] === "CASH")
             const qr = noPrihodFilter.filter((item) => item["Платёжная система"] === "QRCODE")
             const ops = noPrihodFilter.filter((item) => item["Платёжная система"] === "OTHER_PAYMENT_SYSTEM")
 
             const qrops = qr.concat(ops)
+
+            const cash1111pack = cash1111.concat(packCash)
 
             // Сверка
             let iSverka = 0
@@ -67,11 +70,11 @@
             }
             sverka.innerText = iSverka.toFixed(2).toString().replace(".", ",")
 
-            for (let i = 0; i < cash1111.length; i++) {
+            for (let i = 0; i < cash1111pack.length; i++) {
                 let td0 = document.createElement("td")
-                td0.innerText = cash1111[i]["Приход"].replace(".", ",")
+                td0.innerText = cash1111pack[i]["Приход"].toFixed(2).toString().replace(".", ",")
                 let td1 = document.createElement("td")
-                td1.innerText = cash1111[i]["Номер документа-основания"]
+                td1.innerText = cash1111pack[i]["Номер документа-основания"]
 
                 let tr = tableBody.getElementsByTagName("tr")[i]
                 if (tr === undefined) {
@@ -92,8 +95,8 @@
             }
 
             {
-                let max = Math.max(cash1111.length, cash4111.length, qrops.length)
-                for (let i = cash1111.length; i < max; i++) {
+                let max = Math.max(cash1111pack.length, cash4111.length, qrops.length, packCash.length)
+                for (let i = cash1111pack.length; i < max; i++) {
                     let tr = tableBody.getElementsByTagName("tr")[i]
                     if (tr === undefined) {
                         tableBody.appendChild(document.createElement("tr"))
@@ -107,7 +110,7 @@
 
             for (let i = 0; i < cash4111.length; i++) {
                 let td0 = document.createElement("td")
-                td0.innerText = cash4111[i]["Приход"].replace(".", ",")
+                td0.innerText = cash4111[i]["Приход"].toFixed(2).toString().replace(".", ",")
                 let td1 = document.createElement("td")
                 td1.innerText = cash4111[i]["Номер документа-основания"]
 
@@ -129,7 +132,7 @@
             }
 
             {
-                let max = Math.max(cash1111.length, cash4111.length, qrops.length)
+                let max = Math.max(cash1111.length, cash4111.length, qrops.length, packCash.length)
                 for (let i = cash4111.length; i < max; i++) {
                     let tr = tableBody.getElementsByTagName("tr")[i]
                     if (tr === undefined) {
@@ -144,7 +147,7 @@
 
             for (let i = 0; i < qrops.length; i++) {
                 let td0 = document.createElement("td")
-                td0.innerText = qrops[i]["Приход"].replace(".", ",")
+                td0.innerText = qrops[i]["Приход"].toFixed(2).toString().replace(".", ",")
                 let td1 = document.createElement("td")
                 td1.innerText = qrops[i]["Номер документа-основания"]
 
